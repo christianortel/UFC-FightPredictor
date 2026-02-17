@@ -1,0 +1,20 @@
+﻿Scraping Israel Adesanya...
+  Name: Israel Adesanya
+  Nickname: The Last Stylebender
+  Wins: 24
+  Losses: 5
+  Draws: 0
+  Height_cm: 193.0
+  Weight_lbs: 185
+  Reach_cm: 203.2
+  Stance: Switch
+  DOB: Jul 22, 1989
+  SLpM: 4.02
+  Str_Acc: 0.48
+  SApM: 3.2
+  Str_Def: 0.55
+  TD_Avg: 0.05
+  TD_Acc: 0.11
+  TD_Def: 0.76
+  Sub_Avg: 0.1
+  URL: http://www.ufcstats.com/fighter-details/1338e2c7480bdf9e
