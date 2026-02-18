@@ -140,80 +140,88 @@ with col2:
     fighter_b_options = [n for n in fighter_names if n != fighter_a_name]
     fighter_b_name = st.selectbox("Select Fighter B", fighter_b_options, index=0, key="fighter_b")
 
-# --- Tale of the Tape ---
-fighter_a = available_fighters[available_fighters['Name'] == fighter_a_name].iloc[0]
-fighter_b = available_fighters[available_fighters['Name'] == fighter_b_name].iloc[0]
-
-st.markdown("---")
-st.markdown("### 📊 Tale of the Tape")
-
-try:
-    from src.image_fetcher import get_fighter_image_url
-except ImportError:
-    def get_fighter_image_url(name): return None
-
-@st.cache_data(show_spinner="Running photo reconnaissance...", ttl=3600*24)
-def fetch_photo(name):
-    return get_fighter_image_url(name)
-
-# Placeholder Image SVG
-PLACEHOLDER_SVG = """
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#555" width="100%" height="100%">
-  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-</svg>
-"""
-
-col_img_a, col_stats, col_img_b = st.columns([1, 2, 1])
-
-with col_img_a:
-    img_url_a = fetch_photo(fighter_a_name)
-    if img_url_a:
-        st.image(img_url_a, width=200)
-    else:
-        st.markdown(f"<div style='text-align:center;'>{PLACEHOLDER_SVG}</div>", unsafe_allow_html=True)
-        st.caption("No photo available")
-
-with col_img_b:
-    img_url_b = fetch_photo(fighter_b_name)
-    if img_url_b:
-        st.image(img_url_b, width=200)
-    else:
-        st.markdown(f"<div style='text-align:center;'>{PLACEHOLDER_SVG}</div>", unsafe_allow_html=True)
-        st.caption("No photo available")
-
-with col_stats:
-    def format_stat(val, fmt="{}"):
-        if pd.isna(val) or val is None:
-            return "N/A"
-        return fmt.format(val)
-
-    stat_rows = [
-        ("Record", f"{int(fighter_a.get('Wins',0))}-{int(fighter_a.get('Losses',0))}-{int(fighter_a.get('Draws',0))}", 
-                   f"{int(fighter_b.get('Wins',0))}-{int(fighter_b.get('Losses',0))}-{int(fighter_b.get('Draws',0))}"),
-        ("Height", format_stat(fighter_a.get('Height_cm'), "{:.0f} cm"), format_stat(fighter_b.get('Height_cm'), "{:.0f} cm")),
-        ("Reach", format_stat(fighter_a.get('Reach_cm'), "{:.0f} cm"), format_stat(fighter_b.get('Reach_cm'), "{:.0f} cm")),
-        ("Stance", str(fighter_a.get('Stance', 'N/A')), str(fighter_b.get('Stance', 'N/A'))),
-        ("Sig. Strikes/Min", format_stat(fighter_a.get('SLpM'), "{:.2f}"), format_stat(fighter_b.get('SLpM'), "{:.2f}")),
-        ("Strike Accuracy", format_stat(fighter_a.get('Str_Acc'), "{:.0%}"), format_stat(fighter_b.get('Str_Acc'), "{:.0%}")),
-        ("Strikes Absorbed/Min", format_stat(fighter_a.get('SApM'), "{:.2f}"), format_stat(fighter_b.get('SApM'), "{:.2f}")),
-        ("Strike Defense", format_stat(fighter_a.get('Str_Def'), "{:.0%}"), format_stat(fighter_b.get('Str_Def'), "{:.0%}")),
-        ("Takedowns/15min", format_stat(fighter_a.get('TD_Avg'), "{:.2f}"), format_stat(fighter_b.get('TD_Avg'), "{:.2f}")),
-        ("Takedown Accuracy", format_stat(fighter_a.get('TD_Acc'), "{:.0%}"), format_stat(fighter_b.get('TD_Acc'), "{:.0%}")),
-        ("Takedown Defense", format_stat(fighter_a.get('TD_Def'), "{:.0%}"), format_stat(fighter_b.get('TD_Def'), "{:.0%}")),
-        ("Submissions/15min", format_stat(fighter_a.get('Sub_Avg'), "{:.2f}"), format_stat(fighter_b.get('Sub_Avg'), "{:.2f}")),
-        ("Win Rate", format_stat(fighter_a.get('WinRate'), "{:.0%}"), format_stat(fighter_b.get('WinRate'), "{:.0%}")),
-    ]
-
-    tape_data = []
-    for label, val_a, val_b in stat_rows:
-        tape_data.append({"🔴 " + fighter_a_name: val_a, "Stat": label, "🔵 " + fighter_b_name: val_b})
-
-    tape_df = pd.DataFrame(tape_data)
-    st.dataframe(tape_df, use_container_width=True, hide_index=True)
-
-# --- Sidebar Methodology ---
-with st.sidebar:
+    # --- Tale of the Tape (Visual) ---
     st.markdown("---")
+
+    # Define fighters
+    fighter_a = available_fighters[available_fighters['Name'] == fighter_a_name].iloc[0]
+    fighter_b = available_fighters[available_fighters['Name'] == fighter_b_name].iloc[0]
+
+    # Helper for image fetching
+    try:
+        from src.image_fetcher import get_fighter_image_url
+    except ImportError:
+        def get_fighter_image_url(name): return None
+
+    @st.cache_data(show_spinner="Running photo reconnaissance...", ttl=3600*24)
+    def fetch_photo(name):
+        return get_fighter_image_url(name)
+
+    # Placeholder Image SVG
+    PLACEHOLDER_SVG = """
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#555" width="100%" height="100%">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+    </svg>
+    """
+
+    
+    # Function to display fighter stats in a card
+    def fighter_card(fighter, corner="red"):
+        name = fighter['Name']
+        nickname = fighter.get('Nickname', '')
+        if pd.isna(nickname): nickname = ""
+        
+        color = "#e74c3c" if corner == "red" else "#3498db"
+        
+        with st.container(border=True):
+            st.markdown(f"<h3 style='text-align: center; color: {color};'>{name}</h3>", unsafe_allow_html=True)
+            if nickname:
+                st.markdown(f"<p style='text-align: center; color: #888; margin-top: -15px;'><i>'{nickname}'</i></p>", unsafe_allow_html=True)
+            
+            # Image
+            img_url = fetch_photo(name)
+            if img_url:
+                st.image(img_url, use_container_width=True)
+            else:
+                st.markdown(f"<div style='text-align:center;'>{PLACEHOLDER_SVG}</div>", unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # Key Stats Grid
+            row1_col1, row1_col2 = st.columns(2)
+            row1_col1.metric("Height", f"{fighter['Height_cm']:.0f} cm")
+            row1_col2.metric("Reach", f"{fighter['Reach_cm']:.0f} cm")
+            
+            row2_col1, row2_col2 = st.columns(2)
+            row2_col1.metric("Win Rate", f"{fighter['WinRate']:.0%}")
+            row2_col2.metric("Record", f"{int(fighter['Wins'])}-{int(fighter['Losses'])}")
+            
+            st.markdown("---")
+            st.markdown("**Striking**")
+            s_col1, s_col2 = st.columns(2)
+            s_col1.metric("SLpM", f"{fighter['SLpM']:.2f}")
+            s_col2.metric("Def", f"{fighter['Str_Def']:.0%}")
+            
+            st.markdown("**Grappling**")
+            g_col1, g_col2 = st.columns(2)
+            g_col1.metric("TD Avg", f"{fighter['TD_Avg']:.2f}")
+            g_col2.metric("Sub Avg", f"{fighter['Sub_Avg']:.2f}")
+
+    col1, col_center, col2 = st.columns([1, 0.2, 1])
+    
+    with col1:
+        fighter_card(fighter_a, "red")
+        
+    with col_center:
+        st.markdown("<div style='text-align: center; font-size: 3em; font-weight: bold; padding-top: 200px;'>VS</div>", unsafe_allow_html=True)
+        
+    with col2:
+        fighter_card(fighter_b, "blue")
+
+    # Metrics comparison (optional expandable detail)
+    with st.expander("📊 View Detailed Comparison Table"):
+         st.dataframe(available_fighters.set_index('Name'), use_container_width=True)
+
     st.header("ℹ️ How it Works")
     st.markdown("""
     **Prediction Logic:**

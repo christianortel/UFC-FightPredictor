@@ -68,4 +68,14 @@ with col2:
     SELECT * FROM fighters 
     WHERE weight_class = 'Heavyweight'
     ```
+
+    **Advanced (Window Function):**
+    *Rank fighters by wins within weight class*
+    ```sql
+    SELECT name, weight_class, wins,
+    RANK() OVER (PARTITION BY weight_class ORDER BY wins DESC) as rank
+    FROM fighters f
+    JOIN fighter_stats s ON f.id = s.fighter_id
+    LIMIT 20
+    ```
     """)
