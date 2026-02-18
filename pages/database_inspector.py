@@ -38,7 +38,7 @@ with st.expander("📖 View Database Schema"):
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    default_query = "SELECT * FROM fighters LIMIT 10;"
+    default_query = "SELECT * FROM fighters ORDER BY RANDOM() LIMIT 10;"
     query = st.text_area("✍️ SQL Query", value=default_query, height=150)
     
     if st.button("▶️ Run Query", type="primary"):
