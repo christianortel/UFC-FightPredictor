@@ -174,9 +174,11 @@ with col2:
         color = "#e74c3c" if corner == "red" else "#3498db"
         
         with st.container(border=True):
-            st.markdown(f"<h3 style='text-align: center; color: {color};'>{name}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='text-align: center; color: {color}; margin:0;'>{name}</h2>", unsafe_allow_html=True)
             if nickname:
-                st.markdown(f"<p style='text-align: center; color: #888; margin-top: -15px;'><i>'{nickname}'</i></p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='text-align: center; color: #aaa; margin:0; font-style:italic;'>'{nickname}'</p>", unsafe_allow_html=True)
+            
+            st.write("") # Spacer
             
             # Image
             img_url = fetch_photo(name)
@@ -187,33 +189,52 @@ with col2:
             
             st.markdown("---")
             
-            # Key Stats Grid
-            row1_col1, row1_col2 = st.columns(2)
-            row1_col1.metric("Height", f"{fighter['Height_cm']:.0f} cm")
-            row1_col2.metric("Reach", f"{fighter['Reach_cm']:.0f} cm")
-            
-            row2_col1, row2_col2 = st.columns(2)
-            row2_col1.metric("Win Rate", f"{fighter['WinRate']:.0%}")
-            row2_col2.metric("Record", f"{int(fighter['Wins'])}-{int(fighter['Losses'])}")
-            
-            st.markdown("---")
-            st.markdown("**Striking**")
-            s_col1, s_col2 = st.columns(2)
-            s_col1.metric("SLpM", f"{fighter['SLpM']:.2f}")
-            s_col2.metric("Def", f"{fighter['Str_Def']:.0%}")
-            
-            st.markdown("**Grappling**")
-            g_col1, g_col2 = st.columns(2)
-            g_col1.metric("TD Avg", f"{fighter['TD_Avg']:.2f}")
-            g_col2.metric("Sub Avg", f"{fighter['Sub_Avg']:.2f}")
+            # Stats Grid (HTML for better control)
+            stats_html = f"""
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
+                <div>
+                    <span style="color:#888; font-size:0.8em;">Height</span><br>
+                    <span style="font-size:1.1em; font-weight:bold;">{fighter['Height_cm']:.0f} cm</span>
+                </div>
+                <div>
+                    <span style="color:#888; font-size:0.8em;">Reach</span><br>
+                    <span style="font-size:1.1em; font-weight:bold;">{fighter['Reach_cm']:.0f} cm</span>
+                </div>
+                <div>
+                    <span style="color:#888; font-size:0.8em;">Record</span><br>
+                    <span style="font-size:1.1em; font-weight:bold;">{int(fighter['Wins'])}-{int(fighter['Losses'])}</span>
+                </div>
+                <div>
+                    <span style="color:#888; font-size:0.8em;">Win Rate</span><br>
+                    <span style="font-size:1.1em; font-weight:bold;">{fighter['WinRate']:.0%}</span>
+                </div>
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+                <span style="color:{color}; font-weight:bold; border-bottom: 2px solid {color};">STRIKING</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top:5px;">
+                    <div><span style="color:#aaa; font-size:0.8em;">SLpM</span> <span style="font-weight:bold;">{fighter['SLpM']:.2f}</span></div>
+                    <div><span style="color:#aaa; font-size:0.8em;">Def</span> <span style="font-weight:bold;">{fighter['Str_Def']:.0%}</span></div>
+                </div>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <span style="color:{color}; font-weight:bold; border-bottom: 2px solid {color};">GRAPPLING</span>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top:5px;">
+                    <div><span style="color:#aaa; font-size:0.8em;">TD Avg</span> <span style="font-weight:bold;">{fighter['TD_Avg']:.2f}</span></div>
+                    <div><span style="color:#aaa; font-size:0.8em;">Sub Avg</span> <span style="font-weight:bold;">{fighter['Sub_Avg']:.2f}</span></div>
+                </div>
+            </div>
+            """
+            st.markdown(stats_html, unsafe_allow_html=True)
 
-    col1, col_center, col2 = st.columns([1, 0.2, 1])
+    col1, col_center, col2 = st.columns([1, 0.15, 1], gap="small")
     
     with col1:
         fighter_card(fighter_a, "red")
         
     with col_center:
-        st.markdown("<div style='text-align: center; font-size: 3em; font-weight: bold; padding-top: 200px;'>VS</div>", unsafe_allow_html=True)
+        # Centering 'VS' vertically is tricky in Streamlit.
+        # We'll use formatting to push it down roughly to the middle of the images.
+        st.markdown("<div style='text-align: center; font-size: 2.5em; font-weight: 900; color: #e74c3c; padding-top: 250px;'>VS</div>", unsafe_allow_html=True)
         
     with col2:
         fighter_card(fighter_b, "blue")
