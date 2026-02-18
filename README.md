@@ -55,8 +55,9 @@ Score = (Striking_Advantage * 0.40) +
     *   `app.py`: Frontend interface.
 
 ## 🚀 Key Technical Highlights
+*   **SQL Data Warehouse**: Architected a normalized SQLite database (`fighters` and `fighter_stats` tables) and built a custom ETL pipeline to migrate 3,500+ records from raw CSVs.
 *   **Parallel Scraping**: Reduced data collection time by 60% using concurrent processes.
-*   **On-Demand Fetching**: Instead of downloading 3,500+ images (GBs of data), the app scrapes image URLs dynamically when a user selects a fighter, optimizing storage and bandwidth.
+*   **On-Demand Fetching**: Skips downloading heavy images by scraping URLs dynamically.
 *   **Interactive Analytics**: Integrated Plotly dashboard allows users to explore the dataset visually (e.g., Reach vs Height correlations), making it a powerful tool for data storytelling and presentations.
 *   **Robust Error Handling**: Gracefully handles missing data, network timeouts, and name mismatches.
 

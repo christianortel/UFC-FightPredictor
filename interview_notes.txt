@@ -1,0 +1,52 @@
+UFC Fight Predictor - Interview Cheat Sheet
+
+PROJECT OVERVIEW
+I built a full-stack data science application that predicts UFC fight outcomes. It scrapes real-time data from ufcstats.com, processes over 3,500 fighter records, and uses a weighted algorithm to visualize matchup analytics.
+
+Tech Stack: Python, Streamlit, Pandas, BeautifulSoup, Plotly, Git.
+
+---
+
+TECHNICAL DEEP DIVE (THE "HOW")
+
+1. DATA ENGINEERING (PARALLEL SCRAPING)
+- The Challenge: Scraping 3,500 pages sequentially was too slow.
+- The Solution: I implemented Parallel Processing. I split the roster into chunks (A-M, N-R, S-Z) and ran 3 concurrent scraper processes.
+- Result: Reduced data collection time by 60%. I also added error handling to skip 404s and retry on timeouts.
+
+2. DATA CLEANING & IMPUTATION
+- The Challenge: Data was messy. Heights were strings (6' 4"), Reach was missing for many fighters.
+- The Solution: 
+  a) Normalization: Converted all physical stats to metric integers (cm).
+  b) Imputation: For missing Reach, I calculated the average "Ape Index" (Reach-to-Height ratio) of the entire UFC roster (~1.03). I used this ratio to estimate missing reach based on height, which is statistically more accurate than using a simple average.
+
+3. THE ALGORITHM (WEIGHTED MODEL)
+- I built a transparent Weighted Scoring Model instead of a black-box AI.
+- Logic:
+  - Striking (40%): Volume and Accuracy key for modern MMA.
+  - Grappling (30%): Takedown control.
+  - Physical (15%): Reach/Height advantage.
+  - Experience (15%): Win Rate and total fights.
+- Why? It makes the "Why" explainable to the user (e.g., "Fighter A wins because of superior striking efficiency").
+
+4. APP ARCHITECTURE (LAZY LOADING)
+- The Challenge: The source site had no photos. Downloading 3,500 images is inefficient.
+- The Solution: On-Demand Lazy Loading.
+- How: When a user selects a fighter in the dropdown, the app instantly scrapes ufc.com for that specific fighter's image URL and caches it.
+- Result: Fast app load times, minimal storage usage, but high-quality visuals.
+
+5. ANALYTICS DASHBOARD
+- I added a separate Analytics page using Plotly.
+- Visualization: Scatter plots of Reach vs Height (finding physical outliers) and histograms of weight classes.
+- Insight: This demonstrates data storytelling capabilities.
+
+---
+
+DEPLOYMENT
+- Initialized a Git repository.
+- Created a .gitignore to keep it clean.
+- Pushed to GitHub for portfolio showcase.
+- Froze dependencies in requirements.txt for reproducibility.
+
+CLOSING LINE
+"This project proves I can take a problem, engineer a robust data pipeline, build a user-facing product, and deploy it."

@@ -4,37 +4,45 @@ Loads fighter data, engineers features, and predicts fight outcomes.
 """
 import pandas as pd
 import numpy as np
-import os
+from src.db_manager import get_connection
 
 def load_fighters():
-    """Load the scraped fighter data from all CSVs in data folder."""
-    data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
-    data_dir = os.path.normpath(data_dir)
+    """Load fighter data from SQLite database."""
+    conn = get_connection()
     
-    if not os.path.exists(data_dir):
-        raise FileNotFoundError(f"Data directory not found at {data_dir}")
-        
-    # Standardize path formatting
-    master_path = os.path.join(data_dir, 'fighters_master.csv')
+    query = """
+    SELECT 
+        f.name as Name,
+        f.nickname as Nickname,
+        f.height_cm as Height_cm,
+        f.reach_cm as Reach_cm,
+        f.stance as Stance,
+        f.dob as DOB,
+        f.weight_lbs as Weight_lbs,
+        f.url as URL,
+        s.wins as Wins,
+        s.losses as Losses,
+        s.draws as Draws,
+        s.sapm as SApM,
+        s.slpm as SLpM,
+        s.str_acc as Str_Acc,
+        s.str_def as Str_Def,
+        s.td_avg as TD_Avg,
+        s.td_acc as TD_Acc,
+        s.td_def as TD_Def,
+        s.sub_avg as Sub_Avg
+    FROM fighters f
+    JOIN fighter_stats s ON f.id = s.fighter_id
+    """
     
-    # If master file exists, use it exclusively
-    if os.path.exists(master_path):
-        return pd.read_csv(master_path)
-        
-    dfs = []
-    for f in os.listdir(data_dir):
-        if f.endswith('.csv') and 'master' not in f:
-            try:
-                path = os.path.join(data_dir, f)
-                df = pd.read_csv(path)
-                dfs.append(df)
-            except Exception:
-                continue
-                
-    if not dfs:
-        raise FileNotFoundError("No fighter data found. Run the scraper first.")
-        
-    return pd.concat(dfs, ignore_index=True)
+    try:
+        df = pd.read_sql_query(query, conn)
+        return df
+    except Exception as e:
+        print(f"Error loading from DB: {e}")
+        return pd.DataFrame()
+    finally:
+        conn.close()
 
 def clean_fighters(df):
     """Clean and prepare fighter data for analysis."""
