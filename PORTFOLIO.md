@@ -55,6 +55,8 @@ Score = (Striking_Advantage * 0.40) +
     *   `app.py`: Frontend interface.
 
 ## 🚀 Key Technical Highlights
+*   **Inspector**: I built a "Database Inspector" page in the app where I can run live SQL queries to verify data integrity during demos.
+*   **Modern UI/UX**: Custom "Dark Mode" theme with responsive fighter cards and "fight meter" visualization for predictions.
 *   **SQL Data Warehouse**: Architected a normalized SQLite database (`fighters` and `fighter_stats` tables) and built a custom ETL pipeline to migrate 3,500+ records from raw CSVs.
 *   **Parallel Scraping**: Reduced data collection time by 60% using concurrent processes.
 *   **On-Demand Fetching**: Skips downloading heavy images by scraping URLs dynamically.
