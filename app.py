@@ -226,7 +226,7 @@ with col2:
             """
             st.markdown(stats_html, unsafe_allow_html=True)
 
-    col1, col_center, col2 = st.columns([1, 0.15, 1], gap="small")
+    col1, col_center, col2 = st.columns([5, 1, 5], gap="small")
     
     with col1:
         fighter_card(fighter_a, "red")
@@ -234,7 +234,7 @@ with col2:
     with col_center:
         # Centering 'VS' vertically is tricky in Streamlit.
         # We'll use formatting to push it down roughly to the middle of the images.
-        st.markdown("<div style='text-align: center; font-size: 2.5em; font-weight: 900; color: #e74c3c; padding-top: 250px;'>VS</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; font-size: 3em; font-weight: 900; color: #e74c3c; padding-top: 250px; white-space: nowrap;'>VS</div>", unsafe_allow_html=True)
         
     with col2:
         fighter_card(fighter_b, "blue")
